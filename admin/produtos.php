@@ -1,4 +1,3 @@
-<!-- irimportados/admin/produtos.php -->
 <?php
 require_once "admin_auth.php";
 require_once "../includes/db.php";
@@ -13,6 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $categoriaId = $_POST['categoria_id'];
     $preco       = $_POST['preco'];
     $descricao   = $_POST['descricao'];
+    $destaque    = isset($_POST['destaque']) ? 1 : 0;
 
     // Upload de imagem
     $imagemNome = "";
@@ -25,17 +25,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($id) {
         // Editar
         if ($imagemNome) {
-            $stmt = $conn->prepare("UPDATE produtos SET nome=?, categoria_id=?, preco=?, descricao=?, imagem=? WHERE id=?");
-            $stmt->bind_param("sidssi", $nome, $categoriaId, $preco, $descricao, $imagemNome, $id);
+            $stmt = $conn->prepare("UPDATE produtos SET nome=?, categoria_id=?, preco=?, descricao=?, imagem=?, destaque=? WHERE id=?");
+            $stmt->bind_param("sidssii", $nome, $categoriaId, $preco, $descricao, $imagemNome, $destaque, $id);
         } else {
-            $stmt = $conn->prepare("UPDATE produtos SET nome=?, categoria_id=?, preco=?, descricao=? WHERE id=?");
-            $stmt->bind_param("sidsi", $nome, $categoriaId, $preco, $descricao, $id);
+            $stmt = $conn->prepare("UPDATE produtos SET nome=?, categoria_id=?, preco=?, descricao=?, destaque=? WHERE id=?");
+            $stmt->bind_param("sidsii", $nome, $categoriaId, $preco, $descricao, $destaque, $id);
         }
         $stmt->execute();
     } else {
         // Inserir
-        $stmt = $conn->prepare("INSERT INTO produtos (nome, categoria_id, preco, descricao, imagem) VALUES (?,?,?,?,?)");
-        $stmt->bind_param("sidss", $nome, $categoriaId, $preco, $descricao, $imagemNome);
+        $stmt = $conn->prepare("INSERT INTO produtos (nome, categoria_id, preco, descricao, imagem, destaque) VALUES (?,?,?,?,?,?)");
+        $stmt->bind_param("sidssi", $nome, $categoriaId, $preco, $descricao, $imagemNome, $destaque);
         $stmt->execute();
     }
     header("Location: produtos.php");
@@ -74,6 +74,7 @@ include "../includes/admin_header.php";
             <th>Nome</th>
             <th>Categoria</th>
             <th>Preço</th>
+            <th>Destaque</th>
             <th>Descrição</th>
             <th>Ações</th>
         </tr>
@@ -90,6 +91,7 @@ include "../includes/admin_header.php";
                 <td><?= htmlspecialchars($p['nome']) ?></td>
                 <td><?= htmlspecialchars($p['categoria_nome']) ?></td>
                 <td>R$ <?= number_format($p['preco'], 2, ',', '.') ?></td>
+                <td><?= $p['destaque'] ? 'Sim' : 'Não' ?></td>
                 <td><?= htmlspecialchars($p['descricao']) ?></td>
                 <td>
                     <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalProduto"
@@ -98,6 +100,7 @@ include "../includes/admin_header.php";
                         data-categoria="<?= $p['categoria_id'] ?>"
                         data-preco="<?= $p['preco'] ?>"
                         data-descricao="<?= htmlspecialchars($p['descricao']) ?>"
+                        data-destaque="<?= $p['destaque'] ?>"
                     >Editar</button>
                     <a href="?delete=<?= $p['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Excluir produto?')">Excluir</a>
                 </td>
@@ -116,27 +119,41 @@ include "../includes/admin_header.php";
             </div>
             <div class="modal-body">
                 <input type="hidden" name="id" id="produto-id">
+                
                 <div class="mb-3">
                     <label>Nome</label>
                     <input type="text" name="nome" id="produto-nome" class="form-control" required>
                 </div>
+                
                 <div class="mb-3">
                     <label>Categoria</label>
                     <select name="categoria_id" id="produto-categoria" class="form-control" required>
                         <option value="">Selecione</option>
-                        <?php while ($c = $categorias->fetch_assoc()): ?>
+                        <?php
+                        // Reset categorias para loop
+                        $categorias->data_seek(0);
+                        while ($c = $categorias->fetch_assoc()):
+                        ?>
                             <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['nome']) ?></option>
                         <?php endwhile; ?>
                     </select>
                 </div>
+                
                 <div class="mb-3">
                     <label>Preço</label>
                     <input type="number" step="0.01" name="preco" id="produto-preco" class="form-control" required>
                 </div>
+                
                 <div class="mb-3">
                     <label>Descrição</label>
                     <textarea name="descricao" id="produto-descricao" class="form-control" required></textarea>
                 </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="destaque" id="produto-destaque" class="form-check-input">
+                    <label class="form-check-label" for="produto-destaque">Produto em Destaque</label>
+                </div>
+                
                 <div class="mb-3">
                     <label>Imagem</label>
                     <input type="file" name="imagem" class="form-control">
@@ -174,12 +191,14 @@ $(document).ready(function() {
             document.getElementById('produto-categoria').value = button.getAttribute('data-categoria');
             document.getElementById('produto-preco').value = button.getAttribute('data-preco');
             document.getElementById('produto-descricao').value = button.getAttribute('data-descricao');
+            document.getElementById('produto-destaque').checked = button.getAttribute('data-destaque') == 1;
         } else {
             document.getElementById('produto-id').value = "";
             document.getElementById('produto-nome').value = "";
             document.getElementById('produto-categoria').value = "";
             document.getElementById('produto-preco').value = "";
             document.getElementById('produto-descricao').value = "";
+            document.getElementById('produto-destaque').checked = false;
         }
     });
 });

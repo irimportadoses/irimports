@@ -2,46 +2,24 @@
 include "includes/db.php";
 include "includes/header.php";
 
-// Buscar número do WhatsApp no banco
-$whatsapp = $conn->query("SELECT numero FROM telefone LIMIT 1");
-$numero = ($whatsapp && $whatsapp->num_rows > 0) ? $whatsapp->fetch_assoc()['numero'] : '5538984268575';
 
-// Buscar banners do banco
+
+// Buscar número do WhatsApp
+$telefone = "";
+$res = $conn->query("SELECT numero FROM telefone LIMIT 1");
+if ($res && $row = $res->fetch_assoc()) {
+    $telefone = $row['numero'];
+}
+
+// Buscar banners
 $banners = $conn->query("SELECT * FROM banners ORDER BY id DESC");
+
+// Buscar produtos em destaque
+$produtos = $conn->query("SELECT * FROM produtos WHERE destaque = 1 ORDER BY id DESC");
 ?>
 
-<h1 class="text-center mb-4">Produtos em Destaque</h1>
-
-<?php if ($banners->num_rows > 0): ?>
-<div class="floating-carousel-container">
-    <?php while ($b = $banners->fetch_assoc()): ?>
-    <?php
-        // Mensagem WhatsApp para o banner
-        $mensagem_banner = 'Quero saber mais sobre o produto: ' . $b['descricao'];
-        $mensagem_banner = str_replace(array("\r", "\n"), ' ', $mensagem_banner);
-        $link_banner = 'https://wa.me/' . $numero . '?text=' . urlencode($mensagem_banner);
-    ?>
-    <div class="floating-item">
-        <a href="<?= $link_banner ?>" target="_blank">
-            <img src="assets/img/banners/<?= $b['imagem'] ?>" alt="<?= htmlspecialchars($b['titulo']) ?>">
-        </a>
-        <?php if ($b['titulo'] || $b['descricao']): ?>
-        <div class="caption">
-            <?php if ($b['titulo']): ?><h5><?= htmlspecialchars($b['titulo']) ?></h5><?php endif; ?>
-            <?php if ($b['descricao']): ?><p><?= htmlspecialchars($b['descricao']) ?></p><?php endif; ?>
-        </div>
-        <?php endif; ?>
-    </div>
-    <?php endwhile; ?>
-</div>
-<?php endif; ?>
-
-
-<div class="row">
-
-</div>
-
 <style>
+/* CARROSSEL */
 .floating-carousel-container {
     position: relative;
     width: 100%;
@@ -61,13 +39,12 @@ $banners = $conn->query("SELECT * FROM banners ORDER BY id DESC");
     transition: transform 0.2s, opacity 0.2s;
 }
 .floating-item img {
-    max-width: 140px;
-    max-height: 140px;
+    max-width: 120px;
+    max-height: 120px;
     object-fit: contain;
     border-radius: 12px;
     cursor: pointer;
 }
-
 .floating-item .caption {
     text-align: center;
     background: rgba(0,0,0,0.5);
@@ -77,7 +54,120 @@ $banners = $conn->query("SELECT * FROM banners ORDER BY id DESC");
     margin-top: 4px;
     font-size: 0.8rem;
 }
+
+/* CARDS PRODUTOS */
+.product-card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.card-img-wrapper {
+    overflow: hidden;
+    height: 180px;
+}
+.card-img-wrapper img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    transition: transform 0.3s;
+}
+.product-card:hover .card-img-wrapper img {
+    transform: scale(1.1);
+}
+
+/* Botão WhatsApp */
+.btn-whatsapp {
+    transition: all 0.3s;
+    background-color: #25d366;
+    border-color: #25d366;
+}
+.btn-whatsapp:hover {
+    background-color: #1ebe57;
+    border-color: #1ebe57;
+    transform: translateY(-2px);
+}
+.highlight-carousel {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding-bottom: 10px;
+    scroll-behavior: smooth;
+}
+.highlight-carousel::-webkit-scrollbar {
+    height: 8px;
+}
+.highlight-carousel::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 4px;
+}
+.highlight-card {
+    position: relative;
+    flex: 0 0 200px;
+    height: 250px;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.highlight-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.highlight-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.card-overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+.card-overlay h6 {
+    margin: 0;
+    font-size: 0.95rem;
+}
+.card-overlay p {
+    margin: 2px 0 0 0;
+    font-size: 0.85rem;
+}
+
 </style>
+
+
+<!-- CARROSSEL FLUTUANTE -->
+<?php if ($banners->num_rows > 0): ?>
+<div class="floating-carousel-container mb-5">
+    <?php while ($b = $banners->fetch_assoc()): ?>
+        <?php
+            $mensagem_banner = 'Quero saber mais sobre o produto: ' . $b['descricao'];
+            $mensagem_banner = str_replace(array("\r", "\n"), ' ', $mensagem_banner);
+            $link_banner = 'https://wa.me/' . $telefone . '?text=' . urlencode($mensagem_banner);
+        ?>
+        <div class="floating-item">
+            <a href="<?= $link_banner ?>" target="_blank">
+                <img src="assets/img/banners/<?= $b['imagem'] ?>" alt="<?= htmlspecialchars($b['titulo']) ?>">
+            </a>
+            <?php if ($b['titulo'] || $b['descricao']): ?>
+            <div class="caption">
+                <?php if ($b['titulo']): ?><h5><?= htmlspecialchars($b['titulo']) ?></h5><?php endif; ?>
+                <?php if ($b['descricao']): ?><p><?= htmlspecialchars($b['descricao']) ?></p><?php endif; ?>
+            </div>
+            <?php endif; ?>
+        </div>
+    <?php endwhile; ?>
+</div>
+<?php endif; ?>
+
 
 <script>
 const items = document.querySelectorAll(".floating-item");
@@ -85,7 +175,7 @@ const container = document.querySelector(".floating-carousel-container");
 
 let containerW = container.offsetWidth;
 let containerH = container.offsetHeight;
-const imgSize = 140;
+const imgSize = 120;
 
 window.addEventListener('resize', () => {
     containerW = container.offsetWidth;
@@ -130,4 +220,31 @@ function update() {
 update();
 </script>
 
-<?php include "includes/footer.php"; ?>
+<h2 class="mb-4 text-center">Produtos em Destaque</h2>
+
+<div class="highlight-carousel mb-5">
+    <?php while ($p = $produtos->fetch_assoc()): ?>
+    <div class="highlight-card">
+        <img src="assets/img/produtos/<?= $p['imagem'] ?>" alt="<?= htmlspecialchars($p['nome']) ?>">
+        <div class="card-overlay">
+            <h6><?= htmlspecialchars($p['nome']) ?></h6>
+            <p>R$ <?= number_format($p['preco'], 2, ',', '.') ?></p>
+        </div>
+    </div>
+    <?php endwhile; ?>
+</div>
+
+<!-- QUEM SOMOS -->
+<section class="row align-items-center my-5">
+    <div class="col-md-6">
+        <h2>Quem Somos</h2>
+        <p>Somos uma empresa especializada em acessórios de alta qualidade. Nosso compromisso é oferecer produtos que unem design, conforto e durabilidade, sempre pensando na satisfação dos nossos clientes.</p>
+    </div>
+    <div class="col-md-6 text-center">
+        <img src="assets/img/sobre.jpg" class="img-fluid rounded shadow-sm" alt="Sobre Nós">
+    </div>
+</section>
+
+<?php
+include "includes/footer.php";
+?>

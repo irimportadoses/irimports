@@ -1,80 +1,99 @@
-/* irimportados/assets/css/style.css */
-
-body {
-  margin: 0;
-  height: 100vh;
-  background: linear-gradient(135deg, #e3edf7, #fdfdfd);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  font-family: Arial, sans-serif;
+/* Reset básico e altura total */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e3edf7, #fdfdfd);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* garante que o body ocupe a tela inteira */
 }
 
+/* Header */
 header {
-  background-color: #333;
-  color: #fff;
-  padding: 20px;
-  width: 100%;
-  text-align: center;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    width: 100%;
+    text-align: center;
 }
 
 header h1 {
-  margin: 0;
-  font-size: 2em;
+    margin: 0;
+    font-size: 2em;
 }
 
 nav {
-  margin-top: 15px;
+    margin-top: 15px;
 }
 
 nav a {
-  color: #fff;
-  text-decoration: none;
-  margin: 0 15px;
-  font-size: 18px;
+    color: #fff;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 18px;
 }
 
 nav a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
+/* Carrossel */
 .carrossel {
-  width: 200px;  /* Reduzido */
-  height: 300px; /* Reduzido */
-  position: relative;
-  transform-style: preserve-3d;
-  perspective: 1000px;  /* Diminui a profundidade */
-  margin-top: 50px;
+    width: 200px;
+    height: 300px;
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    margin-top: 50px;
 }
 
 .item {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 150px;  /* Reduzido */
-  height: 220px; /* Reduzido */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: transform 0.5s, opacity 0.5s;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 150px;
+    height: 220px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.5s, opacity 0.5s;
 }
 
 .item img {
-  width: 100%;
-  height: auto;
-  pointer-events: none;
-  user-select: none;
-  border-radius: 10px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+    border-radius: 10px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
 }
 
-footer {
-  margin-top: 20px;
-  background-color: #333;
-  color: #fff;
-  padding: 10px 0;
-  width: 100%;
-  text-align: center;
+/* Container principal */
+.container {
+    flex: 1; /* faz o conteúdo ocupar o espaço restante */
+}
+
+/* Footer */
+/* Footer compacto */
+.compact-footer {
+    padding: 10px 0;       /* reduzido */
+    font-size: 0.8rem;     /* menor texto */
+}
+
+.compact-footer h6 {
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+}
+
+.compact-footer p,
+.compact-footer a,
+.compact-footer li a {
+    font-size: 0.75rem;
+    margin: 1px 0;
+}
+
+.compact-footer .border-top {
+    border-color: rgba(255, 255, 255, 0.2);
 }
