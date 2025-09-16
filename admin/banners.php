@@ -1,5 +1,5 @@
-<!-- irimportados/admin/banners.php -->
 <?php
+// irimportados/admin/banners.php
 require_once "admin_auth.php";
 require_once "../includes/db.php";
 
@@ -18,7 +18,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     if ($id) {
-        // Editar
         if ($imagem_nome) {
             $stmt = $conn->prepare("UPDATE banners SET titulo=?, descricao=?, imagem=? WHERE id=?");
             $stmt->bind_param("sssi", $titulo, $descricao, $imagem_nome, $id);
@@ -28,8 +27,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
         $stmt->execute();
     } else {
-        // Inserir
-        if (!$imagem_nome) $imagem_nome = ""; // Garante valor
         $stmt = $conn->prepare("INSERT INTO banners (titulo, descricao, imagem) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $titulo, $descricao, $imagem_nome);
         $stmt->execute();
@@ -41,8 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 // Excluir
 if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
-    // Apagar arquivo de imagem
+    $id = (int) $_GET['delete'];
     $res = $conn->query("SELECT imagem FROM banners WHERE id=$id");
     if ($res && $row = $res->fetch_assoc()) {
         if ($row['imagem'] && file_exists("../assets/img/banners/" . $row['imagem'])) {
@@ -60,49 +56,59 @@ $banners = $conn->query("SELECT * FROM banners ORDER BY id DESC");
 include "../includes/admin_header.php";
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Banners</h2>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalBanner">+ Novo Banner</button>
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Banners</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalBanner">+ Novo Banner</button>
+    </div>
+
+    <div class="table-responsive">
+        <table id="tableBanners" class="table table-bordered table-striped bg-white">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Imagem</th>
+                    <th>Título</th>
+                    <th>Descrição</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($b = $banners->fetch_assoc()): ?>
+                <tr>
+                    <td><?= $b['id'] ?></td>
+                    <td>
+                        <?php if ($b['imagem']): ?>
+                        <img src="../assets/img/banners/<?= $b['imagem'] ?>" 
+                             alt="Banner <?= htmlspecialchars($b['titulo']) ?>" 
+                             class="img-fluid rounded" style="max-height:80px;">
+                        <?php else: ?>
+                        <span class="text-muted">-</span>
+                        <?php endif; ?>
+                    </td>
+                    <td><?= htmlspecialchars($b['titulo']) ?></td>
+                    <td><?= htmlspecialchars($b['descricao']) ?></td>
+                    <td>
+                        <button 
+                            class="btn btn-sm btn-warning mb-1"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modalBanner"
+                            data-id="<?= $b['id'] ?>"
+                            data-titulo="<?= htmlspecialchars($b['titulo']) ?>"
+                            data-descricao="<?= htmlspecialchars($b['descricao']) ?>"
+                        >Editar</button>
+                        <a href="?delete=<?= $b['id'] ?>" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Excluir banner?')">Excluir</a>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<table class="table table-bordered bg-white" id="tableBanners">
-    <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>Imagem</th>
-            <th>Título</th>
-            <th>Descrição</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php while ($b = $banners->fetch_assoc()): ?>
-            <tr>
-                <td><?= $b['id'] ?></td>
-                <td>
-                    <?php if ($b['imagem']): ?>
-                        <img src="../assets/img/banners/<?= $b['imagem'] ?>" width="100" alt="Banner">
-                    <?php endif; ?>
-                </td>
-                <td><?= htmlspecialchars($b['titulo']) ?></td>
-                <td><?= htmlspecialchars($b['descricao']) ?></td>
-                <td>
-                    <button 
-                        class="btn btn-sm btn-warning"
-                        data-bs-toggle="modal" 
-                        data-bs-target="#modalBanner"
-                        data-id="<?= $b['id'] ?>"
-                        data-titulo="<?= htmlspecialchars($b['titulo']) ?>"
-                        data-descricao="<?= htmlspecialchars($b['descricao']) ?>"
-                    >Editar</button>
-                    <a href="?delete=<?= $b['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Excluir banner?')">Excluir</a>
-                </td>
-            </tr>
-        <?php endwhile; ?>
-    </tbody>
-</table>
-
-<!-- Modal -->
+<!-- Modal Banner -->
 <div class="modal fade" id="modalBanner" tabindex="-1">
     <div class="modal-dialog">
         <form method="POST" enctype="multipart/form-data" class="modal-content">
@@ -114,7 +120,7 @@ include "../includes/admin_header.php";
                 <input type="hidden" name="id" id="banner-id">
                 <div class="mb-3">
                     <label>Título</label>
-                    <input type="text" name="titulo" id="banner-titulo" class="form-control">
+                    <input type="text" name="titulo" id="banner-titulo" class="form-control" required>
                 </div>
                 <div class="mb-3">
                     <label>Descrição</label>
@@ -133,19 +139,33 @@ include "../includes/admin_header.php";
     </div>
 </div>
 
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
 <script>
-const modalBanner = document.getElementById('modalBanner');
-modalBanner.addEventListener('show.bs.modal', event => {
-    const button = event.relatedTarget;
-    if (button.getAttribute('data-id')) {
-        document.getElementById('banner-id').value = button.getAttribute('data-id');
-        document.getElementById('banner-titulo').value = button.getAttribute('data-titulo');
-        document.getElementById('banner-descricao').value = button.getAttribute('data-descricao');
-    } else {
-        document.getElementById('banner-id').value = "";
-        document.getElementById('banner-titulo').value = "";
-        document.getElementById('banner-descricao').value = "";
-    }
+$(document).ready(function() {
+    $('#tableBanners').DataTable({
+        "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json"
+        }
+    });
+
+    const modalBanner = document.getElementById('modalBanner');
+    modalBanner.addEventListener('show.bs.modal', event => {
+        const button = event.relatedTarget;
+        if (button.getAttribute('data-id')) {
+            document.getElementById('banner-id').value = button.getAttribute('data-id');
+            document.getElementById('banner-titulo').value = button.getAttribute('data-titulo');
+            document.getElementById('banner-descricao').value = button.getAttribute('data-descricao');
+        } else {
+            document.getElementById('banner-id').value = "";
+            document.getElementById('banner-titulo').value = "";
+            document.getElementById('banner-descricao').value = "";
+        }
+    });
 });
 </script>
 

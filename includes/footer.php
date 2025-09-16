@@ -1,7 +1,7 @@
 <!-- irimportados/includes/footer.php -->
 </div> <!-- fechamento container -->
 
-<footer class="bg-dark text-white py-2">
+<footer style="background-color: rgba(0, 0, 0, 0.13); backdrop-filter: blur(4px);" class="text-white py-2">
     <div class="container">
         <div class="row align-items-center">
             <!-- Coluna 1: vazia -->
@@ -11,8 +11,12 @@
             <div class="col-12 col-md-4 d-flex flex-column align-items-center mb-2 mb-md-0">
                 <span class="mb-1 fw-bold">Redes Sociais</span>
                 <div class="d-flex justify-content-center">
-                    <a href="#" target="_blank" class="mx-2"><img src="assets/img/icons/facebook.png" alt="Facebook" style="width:24px; height:24px;"></a>
-                    <a href="https://www.instagram.com/irimportsmoc/" target="_blank" class="mx-2"><img src="assets/img/icons/instagram.png" alt="Instagram" style="width:24px; height:24px;"></a>
+                    <a href="#" target="_blank" class="mx-2">
+                        <img src="assets/img/icons/facebook.png" alt="Facebook" style="width:24px; height:24px;">
+                    </a>
+                    <a href="https://www.instagram.com/irimportsmoc/" target="_blank" class="mx-2">
+                        <img src="assets/img/icons/instagram.png" alt="Instagram" style="width:24px; height:24px;">
+                    </a>
                 </div>
             </div>
 
@@ -25,14 +29,12 @@
                         $numero = $row['numero'];
                     }
                 ?>
-                <!-- Telefone + WhatsApp -->
                 <div class="d-flex align-items-center mb-1">
                     <span>Telefone: <?= $numero ?></span>
                     <a href="https://wa.me/<?= $numero ?>" target="_blank" class="ms-2">
                         <img src="assets/img/icons/whatsapp.png" alt="WhatsApp" style="width:24px; height:24px;">
                     </a>
                 </div>
-                <!-- E-mail -->
                 <div>
                     <span>Email: contato@irimportados.com</span>
                 </div>

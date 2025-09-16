@@ -1,3 +1,4 @@
+<!-- irimportados/admin/dashboard.php -->
 <?php
 require_once "admin_auth.php";
 include "../includes/db.php";
@@ -53,6 +54,14 @@ $res = $conn->query("SELECT numero FROM telefone WHERE id = 1");
 if ($res && $row = $res->fetch_assoc()) {
     $telefone = $row['numero'];
 }
+
+$resTotalAval = $conn->query("SELECT COUNT(*) as total FROM avaliacoes");
+$resAprovadas = $conn->query("SELECT COUNT(*) as total FROM avaliacoes WHERE aprovado = 1");
+$resPendentes = $conn->query("SELECT COUNT(*) as total FROM avaliacoes WHERE aprovado = 0");
+
+$totalAvaliacoes = ($resTotalAval && $row = $resTotalAval->fetch_assoc()) ? $row['total'] : 0;
+$totalAprovadas  = ($resAprovadas && $row = $resAprovadas->fetch_assoc()) ? $row['total'] : 0;
+$totalPendentes  = ($resPendentes && $row = $resPendentes->fetch_assoc()) ? $row['total'] : 0;
 ?>
 
 <!DOCTYPE html>
@@ -103,6 +112,18 @@ if ($res && $row = $res->fetch_assoc()) {
         </div>
     </div>
 
+    <div class="row g-4 mt-4">
+    <!-- Card Avaliações -->
+        <div class="col-md-4">
+            <div class="card text-center card-dashboard p-3">
+                <h5>Avaliações</h5>
+                <p class="fs-3"><?= $totalAvaliacoes ?></p>
+                <p class="mb-1 text-success">Aprovadas: <?= $totalAprovadas ?></p>
+                <p class="mb-2 text-warning">Pendentes: <?= $totalPendentes ?></p>
+                <a href="avaliacao.php" class="btn btn-primary btn-sm">Gerenciar Avaliações</a>
+            </div>
+        </div>
+    </div>
     <div class="row mt-4">
         <div class="col-md-6 mx-auto">
             <div class="card whatsapp-card p-4 text-center">

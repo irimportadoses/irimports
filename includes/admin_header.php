@@ -45,6 +45,9 @@ require_once "admin_auth.php"; // Verifica login
                         <a class="nav-link" href="usuarios.php">Usuarios</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="avaliacao.php">Avaliação</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link btn btn-sm btn-danger ms-2" href="logout.php">Sair</a>
                     </li>
                 </ul>
