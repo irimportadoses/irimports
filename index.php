@@ -15,6 +15,9 @@ $banners = $conn->query("SELECT * FROM banners ORDER BY id DESC");
 // Buscar produtos em destaque
 $produtos = $conn->query("SELECT * FROM produtos WHERE destaque = 1 ORDER BY id DESC");
 
+// Buscar categorias
+$categorias = $conn->query("SELECT DISTINCT nome,imagem FROM categorias");
+
 // Buscar avaliações aprovadas
 $avaliacoes = $conn->query("SELECT nome, nota, comentario, data, foto FROM avaliacoes WHERE aprovado = 1 ORDER BY data DESC");
 ?>
@@ -25,6 +28,28 @@ $avaliacoes = $conn->query("SELECT nome, nota, comentario, data, foto FROM avali
    ========================= */
 
 /* ===== Estrelas ===== */
+.categoria-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #0e72deff;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.categoria-icon img {
+  transition: transform 0.3s;
+  border-radius: 12px;
+}
+
+.categoria-icon:hover img {
+  transform: scale(1.2);
+}
+.categoria-icon p {
+  margin-top: 5px;
+  font-weight: 500;
+}
+
 .star-rating {
   display: flex;
   flex-direction: row-reverse;
@@ -94,15 +119,25 @@ $avaliacoes = $conn->query("SELECT nome, nota, comentario, data, foto FROM avali
   transform: translateY(-5px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
-.card-img-wrapper { overflow: hidden; height: 180px; }
-.card-img-wrapper img {
-  height: 100%;
+.card-img-wrapper {
   width: 100%;
-  object-fit: contain;
-  transition: transform 0.3s;
+  height: 250px; /* altura fixa */
+  overflow: hidden;
+  border-radius: 15px;
+  display: flex;
+  align-items: center; /* centraliza verticalmente imagens menores */
+  justify-content: center; /* centraliza horizontalmente */
+  background-color: #f5f5f5; /* cor de fundo caso imagem não carregue */
 }
-.product-card:hover .card-img-wrapper img { transform: scale(1.1); }
+.card-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* preenche totalmente, pode cortar */
+}
 
+.product-card:hover .card-img-wrapper img {
+  transform: scale(1.05); /* ainda mantém o efeito hover */
+}
 /* ===== Botão WhatsApp ===== */
 .btn-whatsapp {
   transition: all 0.3s;
@@ -196,6 +231,99 @@ $avaliacoes = $conn->query("SELECT nome, nota, comentario, data, foto FROM avali
   overflow-y: auto;
   font-size: 0.9rem;
 }
+/* ===== Produtos em Destaque ===== */
+/* Faixa de fundo */
+.highlight-background {
+  width: 100vw; /* ocupa toda a tela */
+  margin-left: calc(-50vw + 50%); /* remove margem do container */
+  padding: 80px 0;
+  background: linear-gradient(135deg, #0e72deff, #00172cff);
+  box-sizing: border-box;
+}
+
+/* Container do carrossel */
+.destaque-container {
+  width: 100%;
+  overflow: hidden;
+  margin: 0 auto;
+  padding: 0; /* remove padding lateral */
+}
+
+/* Track do carrossel */
+.destaque-track {
+  display: flex;
+  gap: 25px;
+  animation: scrollProducts 28s linear infinite;
+}
+
+/* Cards */
+.destaque-item {
+  flex: 0 0 300px; /* mais largo */
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  transition: transform 0.3s;
+}
+
+.destaque-item:hover { transform: translateY(-10px); }
+
+.card-img-wrapper {
+  width: 100%;
+  height: 250px; /* altura fixa */
+  overflow: hidden;
+  border-radius: 15px;
+  display: flex;
+  align-items: center; /* centraliza verticalmente imagens menores */
+  justify-content: center; /* centraliza horizontalmente */
+  background-color: #f5f5f5; /* cor de fundo caso imagem não carregue */
+}
+
+.card-img-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* muda para contain, não corta mais */
+  display: block;
+  border-radius: 15px;
+  transition: transform 0.3s;
+}
+
+.destaque-item h5 {
+  font-size: 18px;
+  margin: 10px 0;
+  color: #111;
+}
+
+.destaque-item p {
+  font-size: 14px;
+  color: #444;
+  min-height: 50px;
+}
+
+.destaque-item .preco {
+  font-size: 20px;
+  color: #28a745;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+@keyframes scrollProducts {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.btn-comprar {
+    font-size: 1.1rem;      /* aumenta o texto */
+    padding: 10px 20px;     /* aumenta altura e largura */
+    border-radius: 12px;    /* cantos arredondados */
+    transition: all 0.3s;
+}
+
+.btn-comprar:hover {
+    transform: translateY(-2px);
+    background-color: #1fa44d; /* leve escurecimento no hover */
+}
 
 /* ===== Banner Animado ===== */
 #banner-container {
@@ -270,9 +398,11 @@ $avaliacoes = $conn->query("SELECT nome, nota, comentario, data, foto FROM avali
 .highlight-background {
   width: 100%;
   background: linear-gradient(45deg, #e3e3e377 -50%, #13131362 85%);
-  padding: 40px 0;
+  padding: 90px 0;
+  margin-left: calc(-50vw + 50%); /* remove margens do container */
   box-sizing: border-box;
 }
+
 .highlight-rotation-container {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
@@ -325,6 +455,25 @@ $avaliacoes = $conn->query("SELECT nome, nota, comentario, data, foto FROM avali
 .card-overlay h6 { margin: 0; font-size: 1rem; }
 .card-overlay p { margin: 2px 0 0 0; font-size: 0.85rem; }
 
+.quem-somos-text h2 { color: #0e72deff;; }
+.o-que-achou { color: #0e72deff;; }
+
+.btn-azul-personalizado {
+    background-color: #0e72de;
+    border-color: #0e72de;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+.btn-azul-personalizado:hover {
+    background-color: #0950b0; /* azul mais escuro no hover */
+    border-color: #0950b0;
+    transform: translateY(-2px);
+}
+.categoria-icon img {
+    filter: invert(38%) sepia(83%) saturate(6471%) hue-rotate(190deg) brightness(95%) contrast(90%);
+}
+
 </style>
 
 <!-- ===== Banner Animado ===== -->
@@ -347,79 +496,76 @@ $avaliacoes = $conn->query("SELECT nome, nota, comentario, data, foto FROM avali
     <?php $i++; endwhile; ?>
 </div>
 
-<script>
-const items = document.querySelectorAll(".floating-item");
-const container = document.querySelector(".floating-carousel-container");
-let containerW = container.offsetWidth;
-let containerH = container.offsetHeight;
-const imgSize = 120;
 
-window.addEventListener('resize', () => {
-    containerW = container.offsetWidth;
-    containerH = container.offsetHeight;
-});
+</br>
 
-const banners = [];
-items.forEach((item) => {
-    banners.push({
-        el: item,
-        x: Math.random() * (containerW - imgSize),
-        y: Math.random() * (containerH - imgSize),
-        z: Math.random() * 200 - 100,
-        vx: (Math.random() - 0.5) * 1.5,
-        vy: (Math.random() - 0.5) * 1.5,
-        vz: (Math.random() - 0.5) * 0.5
-    });
-});
-
-function update() {
-    banners.forEach(b => {
-        b.x += b.vx;
-        b.y += b.vy;
-        b.z += b.vz;
-        if (b.x < 0) { b.x = 0; b.vx *= -1; }
-        if (b.x > containerW - imgSize) { b.x = containerW - imgSize; b.vx *= -1; }
-        if (b.y < 0) { b.y = 0; b.vy *= -1; }
-        if (b.y > containerH - imgSize) { b.y = containerH - imgSize; b.vy *= -1; }
-        if (b.z < -100 || b.z > 100) b.vz *= -1;
-        const scale = 0.5 + (b.z + 100) / 200 * 0.5;
-        const opacity = 0.5 + (b.z + 100) / 200 * 0.5;
-        b.el.style.transform = `translate(${b.x}px, ${b.y}px) scale(${scale})`;
-        b.el.style.opacity = opacity;
-        b.el.style.zIndex = Math.round(scale * 100);
-    });
-    requestAnimationFrame(update);
-}
-update();
-</script>
-
-<!-- ===== Produtos em Destaque com Faixa de Fundo ===== -->
-<div class="highlight-background">
-    <div class="highlight-rotation-container">
-        <div class="column column-left">
-            <div class="highlight-left-top"></div>
-            <div class="highlight-left-bottom"></div>
-        </div>
-        <div class="column column-right">
-            <div class="highlight-right"></div>
-        </div>
+<div class="container py-5">
+    <h2 class="text-center mb-4">Categorias</h2>
+    <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
+        <?php while($cat = $categorias->fetch_assoc()): ?>
+            <a href="produtos.php?categoria=<?= urlencode($cat['nome']) ?>" class="categoria-icon text-center text-decoration-none">
+                <img src="assets/img/categorias/<?= htmlspecialchars($cat['imagem']) ?>" 
+                     alt="<?= htmlspecialchars($cat['nome']) ?>" 
+                     style="height:70px;">
+                <p><?= htmlspecialchars($cat['nome']) ?></p>
+            </a>
+        <?php endwhile; ?>
     </div>
 </div>
 
 
-<?php 
-// Puxando todos os produtos de destaque
-$produtos->data_seek(0); 
-$produtosArray = []; 
-while($p = $produtos->fetch_assoc()) $produtosArray[] = $p;
-?>
+</br>
+<!-- Produtos em Destaque -->
+<div class="highlight-background"> 
+  <h2 class="text-center text-white mb-4">Produtos em Destaque</h2>
+  <div class="destaque-container">
+    <div class="destaque-track">
+      <?php 
+      // Puxar produtos de destaque
+      $produtos = $conn->query("SELECT * FROM produtos WHERE destaque = 1 ORDER BY id DESC");
+      while($prod = $produtos->fetch_assoc()): ?>
+        <div class="destaque-item">
+          <div class="card-img-wrapper">
+            <img src="assets/img/produtos/<?= htmlspecialchars($prod['imagem']) ?>" 
+                 alt="<?= htmlspecialchars($prod['nome']) ?>">
+          </div>
+          <h5><?= htmlspecialchars($prod['nome']) ?></h5>
+          <p><?= htmlspecialchars($prod['descricao']) ?></p>
+          <div class="preco">R$ <?= number_format($prod['preco'],2,",",".") ?></div>
+          <a href="https://wa.me/55<?= $telefone ?>?text=Olá! Tenho interesse no produto: <?= urlencode($prod['nome']) ?>" 
+            target="_blank" class="btn btn-success btn-comprar">Comprar</a>
+        </div>
+      <?php endwhile; ?>
+
+      <!-- duplicação para efeito infinito -->
+      <?php 
+      $produtos2 = $conn->query("SELECT * FROM produtos WHERE destaque = 1 ORDER BY id DESC");
+      while($prod = $produtos2->fetch_assoc()): ?>
+        <div class="destaque-item">
+          <div class="card-img-wrapper">
+            <img src="assets/img/produtos/<?= htmlspecialchars($prod['imagem']) ?>" 
+                 alt="<?= htmlspecialchars($prod['nome']) ?>">
+          </div>
+          <h5><?= htmlspecialchars($prod['nome']) ?></h5>
+          <p><?= htmlspecialchars($prod['descricao']) ?></p>
+          <div class="preco">R$ <?= number_format($prod['preco'],2,",",".") ?></div>
+          <a href="https://wa.me/55<?= $telefone ?>?text=Olá! Tenho interesse no produto: <?= urlencode($prod['nome']) ?>" 
+             target="_blank" class="btn btn-success btn-sm">Comprar</a>
+        </div>
+      <?php endwhile; ?>
+    </div>
+  </div>
+</div>
+
+
+
 
 
 
 <!-- Quem Somos -->
 <section class="container my-5">
     <div class="row align-items-center">
-        <div class="col-md-5 mb-4 mb-md-0">
+        <div class="col-md-5 mb-4 mb-md-0 quem-somos-text">
             <h2>Quem Somos</h2>
             <p>Somos uma empresa especializada em acessórios de alta qualidade. Nosso compromisso é oferecer produtos que unem design, conforto e durabilidade, sempre pensando na satisfação dos nossos clientes.</p>
         </div>
@@ -439,6 +585,10 @@ while($p = $produtos->fetch_assoc()) $produtosArray[] = $p;
         <img src="assets/img/marcas/alexa.svg" alt="Alexa" style="height:60px;">
         <img src="assets/img/marcas/motorola.png" alt="Motorola" style="height:60px;">
         <img src="assets/img/marcas/samsung.png" alt="Samsung" style="height:140px;">
+    </div>
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
+        <img src="assets/img/marcas/dogg.png" alt="DOGG" style="height:120px;">
+
     </div>
 </div>
 
@@ -473,10 +623,10 @@ while($p = $produtos->fetch_assoc()) $produtosArray[] = $p;
 
 
 <section class="container my-5 text-center">
-    <h2 class="text-info mb-4">O que você achou da nossa loja?</h2>
-    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#avaliacaoModal">
-        Deixar Avaliação
-    </button>
+    <h2 class="mb-4 o-que-achou">O que você achou da nossa loja?</h2>
+<button class="btn btn-azul-personalizado" data-bs-toggle="modal" data-bs-target="#avaliacaoModal">
+    Deixar Avaliação
+</button>
 </section>
 
 <!-- Modal Avaliação -->
@@ -692,5 +842,49 @@ setInterval(()=>{
     setTimeout(updateProdutos, 400); // delay para aplicar fade-in
 }, 4000);
 </script>
+<script>
+const items = document.querySelectorAll(".floating-item");
+const container = document.querySelector(".floating-carousel-container");
+let containerW = container.offsetWidth;
+let containerH = container.offsetHeight;
+const imgSize = 120;
 
+window.addEventListener('resize', () => {
+    containerW = container.offsetWidth;
+    containerH = container.offsetHeight;
+});
+
+const banners = [];
+items.forEach((item) => {
+    banners.push({
+        el: item,
+        x: Math.random() * (containerW - imgSize),
+        y: Math.random() * (containerH - imgSize),
+        z: Math.random() * 200 - 100,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: (Math.random() - 0.5) * 1.5,
+        vz: (Math.random() - 0.5) * 0.5
+    });
+});
+
+function update() {
+    banners.forEach(b => {
+        b.x += b.vx;
+        b.y += b.vy;
+        b.z += b.vz;
+        if (b.x < 0) { b.x = 0; b.vx *= -1; }
+        if (b.x > containerW - imgSize) { b.x = containerW - imgSize; b.vx *= -1; }
+        if (b.y < 0) { b.y = 0; b.vy *= -1; }
+        if (b.y > containerH - imgSize) { b.y = containerH - imgSize; b.vy *= -1; }
+        if (b.z < -100 || b.z > 100) b.vz *= -1;
+        const scale = 0.5 + (b.z + 100) / 200 * 0.5;
+        const opacity = 0.5 + (b.z + 100) / 200 * 0.5;
+        b.el.style.transform = `translate(${b.x}px, ${b.y}px) scale(${scale})`;
+        b.el.style.opacity = opacity;
+        b.el.style.zIndex = Math.round(scale * 100);
+    });
+    requestAnimationFrame(update);
+}
+update();
+</script>
 <?php include "includes/footer.php"; ?>
