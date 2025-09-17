@@ -19,8 +19,19 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
-// Buscar avaliações
-$avaliacoes = $conn->query("SELECT * FROM avaliacoes ORDER BY data DESC");
+// Filtro
+$filtro = isset($_GET['filtro']) ? $_GET['filtro'] : '';
+switch($filtro) {
+    case 'pendentes':
+        $sql = "SELECT * FROM avaliacoes WHERE aprovado=0 ORDER BY data DESC";
+        break;
+    case 'aprovadas':
+        $sql = "SELECT * FROM avaliacoes WHERE aprovado=1 ORDER BY data DESC";
+        break;
+    default:
+        $sql = "SELECT * FROM avaliacoes ORDER BY data DESC";
+}
+$avaliacoes = $conn->query($sql);
 
 // Contar totais
 $totalAvaliacoes = ($res = $conn->query("SELECT COUNT(*) as total FROM avaliacoes")) ? $res->fetch_assoc()['total'] : 0;
@@ -47,6 +58,13 @@ include "../includes/admin_header.php";
                 <p class="fs-4"><?= $totalPendentes ?></p>
             </div>
         </div>
+    </div>
+
+    <!-- Filtros rápidos -->
+    <div class="mb-3">
+        <a href="avaliacao.php" class="btn btn-secondary btn-sm <?= $filtro=='' ? 'active' : '' ?>">Todos</a>
+        <a href="avaliacao.php?filtro=pendentes" class="btn btn-warning btn-sm <?= $filtro=='pendentes' ? 'active' : '' ?>">Pendentes</a>
+        <a href="avaliacao.php?filtro=aprovadas" class="btn btn-success btn-sm <?= $filtro=='aprovadas' ? 'active' : '' ?>">Aprovadas</a>
     </div>
 
     <div class="table-responsive">

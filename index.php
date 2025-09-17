@@ -20,6 +20,10 @@ $avaliacoes = $conn->query("SELECT nome, nota, comentario, data, foto FROM avali
 ?>
 
 <style>
+/* =========================
+   ESTILOS GERAIS DO SITE
+   ========================= */
+
 /* ===== Estrelas ===== */
 .star-rating {
   display: flex;
@@ -36,191 +40,312 @@ $avaliacoes = $conn->query("SELECT nome, nota, comentario, data, foto FROM avali
 
 /* ===== Quem Somos ===== */
 .quem-somos-img {
-    max-width: 300px;
-    opacity: 0.3;
-    transition: opacity 0.3s, transform 0.3s;
+  max-width: 300px;
+  opacity: 0.3;
+  transition: opacity 0.3s, transform 0.3s;
 }
 .quem-somos-img:hover {
-    opacity: 1;
-    transform: scale(1.03);
+  opacity: 1;
+  transform: scale(1.03);
 }
 
 /* ===== Carrossel Flutuante ===== */
 .floating-carousel-container {
-    position: relative;
-    width: 90vw;
-    height: 350px;
-    overflow: hidden;
-    perspective: 800px;
-    background: #f8f9fa01;
-    border-radius: 12px;
-    margin: 0 auto 40px auto;
+  position: relative;
+  width: 90vw;
+  height: 350px;
+  overflow: hidden;
+  perspective: 800px;
+  background: #f8f9fa01;
+  border-radius: 12px;
+  margin: 0 auto 40px auto;
 }
 .floating-item {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform-style: preserve-3d;
-    transition: transform 0.2s, opacity 0.2s;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.2s, opacity 0.2s;
 }
 .floating-item img {
-    max-width: 120px;
-    max-height: 120px;
-    object-fit: contain;
-    border-radius: 12px;
-    cursor: pointer;
+  max-width: 120px;
+  max-height: 120px;
+  object-fit: contain;
+  border-radius: 12px;
+  cursor: pointer;
 }
 .floating-item .caption {
-    text-align: center;
-    background: rgba(0,0,0,0.5);
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 5px;
-    margin-top: 4px;
-    font-size: 0.8rem;
+  text-align: center;
+  background: rgba(0, 0, 0, 0);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 5px;
+  margin-top: 4px;
+  font-size: 0.8rem;
 }
 
 /* ===== Cards de Produtos ===== */
 .product-card {
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 .card-img-wrapper { overflow: hidden; height: 180px; }
 .card-img-wrapper img {
-    height: 100%;
-    width: 100%;
-    object-fit: contain;
-    transition: transform 0.3s;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  transition: transform 0.3s;
 }
 .product-card:hover .card-img-wrapper img { transform: scale(1.1); }
 
 /* ===== Botão WhatsApp ===== */
 .btn-whatsapp {
-    transition: all 0.3s;
-    background-color: #25d366;
-    border-color: #25d366;
+  transition: all 0.3s;
+  background-color: #25d366;
+  border-color: #25d366;
 }
 .btn-whatsapp:hover {
-    background-color: #1ebe57;
-    border-color: #1ebe57;
-    transform: translateY(-2px);
+  background-color: #1ebe57;
+  border-color: #1ebe57;
+  transform: translateY(-2px);
 }
 
 /* ===== Carrossel de Destaque ===== */
 .highlight-carousel {
-    display: flex;
-    overflow-x: auto;
-    gap: 15px;
-    padding: 0 20px 10px 20px;
-    scroll-behavior: smooth;
-    justify-content: center;
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  padding: 0 20px 10px 20px;
+  scroll-behavior: smooth;
+  justify-content: center;
 }
 .highlight-carousel::-webkit-scrollbar { height: 8px; }
 .highlight-carousel::-webkit-scrollbar-thumb {
-    background-color: rgba(0,0,0,0.4);
-    border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.98);
+  border-radius: 4px;
 }
 .highlight-carousel::-webkit-scrollbar-track { background: transparent; }
 .highlight-card {
-    position: relative;
-    flex: 0 0 200px;
-    height: 250px;
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-    background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: relative;
+  flex: 0 0 200px;
+  height: 250px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  background: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .highlight-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 .highlight-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    padding: 10px;
-    display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+  display: block;
 }
 .card-overlay {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.55);
-    color: #fff;
-    padding: 10px;
-    text-align: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  padding: 10px;
+  text-align: center;
 }
 .card-overlay h6 { margin: 0; font-size: 0.95rem; }
 .card-overlay p { margin: 2px 0 0 0; font-size: 0.85rem; }
 
 /* ===== Avaliações (carrossel horizontal) ===== */
 .avaliacoes-carousel {
-    display: flex;
-    overflow-x: auto;
-    gap: 15px;
-    padding: 0 10px;
-    scroll-behavior: smooth;
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  padding: 0 10px;
+  scroll-behavior: smooth;
 }
 .avaliacoes-carousel::-webkit-scrollbar { height: 8px; }
 .avaliacoes-carousel::-webkit-scrollbar-thumb {
-    background-color: rgba(0,0,0,0.4);
-    border-radius: 4px;
+  background-color: rgba(0,0,0,0.4);
+  border-radius: 4px;
 }
 .avaliacoes-carousel::-webkit-scrollbar-track { background: transparent; }
 .avaliacao-card {
-    flex: 0 0 300px;
-    height: 220px;
-    padding: 15px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
+  flex: 0 0 300px;
+  height: 220px;
+  padding: 15px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
 }
 .avaliacao-card .comentario {
-    overflow-y: auto;
-    font-size: 0.9rem;
+  overflow-y: auto;
+  font-size: 0.9rem;
 }
-.comentario {
-    overflow-y: auto;
-    font-size: 0.9rem;
+
+/* ===== Banner Animado ===== */
+#banner-container {
+  position: relative;
+  height: 400px;
+  overflow: hidden;
+  background: #11111170; /* fundo escuro translúcido */
 }
+.banner-slide {
+  position: absolute;
+  width: 100%; 
+  height: 100%;
+  top: 0; left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 500px;
+  padding: 0 30px;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 1s ease-in-out;
+}
+.banner-slide.active {
+  opacity: 1;
+  transform: translateX(0);
+  z-index: 2;
+}
+.banner-slide.exiting {
+  opacity: 1;
+  transform: translateX(-100%) rotateY(45deg) rotateZ(10deg);
+  z-index: 1;
+}
+.banner-text {
+  max-width: 45%;
+  text-align: left;
+  color: #fff;
+}
+.banner-title { font-size: 4rem; margin-bottom: 10px; }
+.banner-desc { font-size: 1rem; line-height: 1.4; }
+.banner-logo {
+  max-width: 30%;
+  perspective: 1000px;
+}
+.banner-logo img {
+  width: 100%;
+  object-fit: contain;
+  transition: transform 1s ease-in-out;
+}
+.banner-slide.exiting .banner-logo img {
+  transform: translateX(200%) rotateY(180deg) rotateZ(20deg);
+}
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.3s;
+}
+.carousel-btn:hover { background: rgba(0, 0, 0, 0.8); }
+.carousel-btn.prev { left: 10px; }
+.carousel-btn.next { right: 10px; }
+
+/* ===== Faixa de Fundo Produtos Em Destaque ===== */
+.highlight-background {
+  width: 100%;
+  background: linear-gradient(45deg, #e3e3e377 -50%, #13131362 85%);
+  padding: 40px 0;
+  box-sizing: border-box;
+}
+.highlight-rotation-container {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto 50px auto;
+}
+.column-left {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px;
+}
+.column-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.highlight-left-top, .highlight-left-bottom, .highlight-right {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.5s, opacity 0.5s;
+  background: #fbf9f90a;
+  color: #c51717ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+.highlight-right { height: 420px; }
+.highlight-left-top img, .highlight-left-bottom img, .highlight-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.5s;
+}
+.highlight-left-top:hover img, .highlight-left-bottom:hover img, .highlight-right:hover img {
+  transform: scale(1.5);
+}
+.card-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(32, 46, 80, 0.45);
+  text-align: center;
+  padding: 8px;
+}
+.card-overlay h6 { margin: 0; font-size: 1rem; }
+.card-overlay p { margin: 2px 0 0 0; font-size: 0.85rem; }
+
 </style>
 
-<!-- ===== Carrossel Flutuante ===== -->
-<?php if ($banners->num_rows > 0): ?>
-<div class="floating-carousel-container mb-5">
-    <?php while ($b = $banners->fetch_assoc()): ?>
-        <?php
-            $mensagem_banner = 'Quero saber mais sobre o produto: ' . $b['descricao'];
-            $mensagem_banner = str_replace(array("\r", "\n"), ' ', $mensagem_banner);
-            $link_banner = 'https://wa.me/' . $telefone . '?text=' . urlencode($mensagem_banner);
-        ?>
-        <div class="floating-item">
-            <a href="<?= $link_banner ?>" target="_blank">
-                <img src="assets/img/banners/<?= $b['imagem'] ?>" alt="<?= htmlspecialchars($b['titulo']) ?>">
-            </a>
-            <?php if ($b['titulo'] || $b['descricao']): ?>
-            <div class="caption">
-                <?php if ($b['titulo']): ?><h5><?= htmlspecialchars($b['titulo']) ?></h5><?php endif; ?>
-                <?php if ($b['descricao']): ?><p><?= htmlspecialchars($b['descricao']) ?></p><?php endif; ?>
+<!-- ===== Banner Animado ===== -->
+<div id="banner-container">
+    <?php 
+    $banners->data_seek(0);
+    $i = 0;
+    while($b = $banners->fetch_assoc()): ?>
+        <div class="banner-slide <?= $i === 0 ? 'active' : '' ?>">
+            <!-- Texto à esquerda -->
+            <div class="banner-text">
+                <h1 class="banner-title"><?= htmlspecialchars($b['titulo']) ?></h1>
+                <p class="banner-desc"><?= htmlspecialchars($b['descricao']) ?></p>
             </div>
-            <?php endif; ?>
+            <!-- Logo à direita -->
+            <div class="banner-logo">
+                <img src="assets/img/banners/<?= $b['imagem'] ?>" alt="<?= htmlspecialchars($b['titulo']) ?>">
+            </div>
         </div>
-    <?php endwhile; ?>
+    <?php $i++; endwhile; ?>
 </div>
-<?php endif; ?>
 
 <script>
 const items = document.querySelectorAll(".floating-item");
@@ -268,18 +393,28 @@ function update() {
 update();
 </script>
 
-<h2 class="mb-4 text-center">Produtos em Destaque</h2>
-<div class="highlight-carousel mb-5">
-    <?php while ($p = $produtos->fetch_assoc()): ?>
-    <div class="highlight-card">
-        <img src="assets/img/produtos/<?= $p['imagem'] ?>" alt="<?= htmlspecialchars($p['nome']) ?>">
-        <div class="card-overlay">
-            <h6><?= htmlspecialchars($p['nome']) ?></h6>
-            <p>R$ <?= number_format($p['preco'], 2, ',', '.') ?></p>
+<!-- ===== Produtos em Destaque com Faixa de Fundo ===== -->
+<div class="highlight-background">
+    <div class="highlight-rotation-container">
+        <div class="column column-left">
+            <div class="highlight-left-top"></div>
+            <div class="highlight-left-bottom"></div>
+        </div>
+        <div class="column column-right">
+            <div class="highlight-right"></div>
         </div>
     </div>
-    <?php endwhile; ?>
 </div>
+
+
+<?php 
+// Puxando todos os produtos de destaque
+$produtos->data_seek(0); 
+$produtosArray = []; 
+while($p = $produtos->fetch_assoc()) $produtosArray[] = $p;
+?>
+
+
 
 <!-- Quem Somos -->
 <section class="container my-5">
@@ -413,20 +548,22 @@ document.getElementById('formAvaliacao').addEventListener('submit', function(e){
         switch(data) {
             case 'sucesso':
                 form.reset();
-                mensagem.innerHTML = '<div class="alert alert-success">Avaliação enviada com sucesso! Aguarde aprovação.</div>';
+                mensagem.innerHTML = '<div class="alert alert-success">Avaliação enviada com sucesso! Aguarde, você será redirecionado...</div>';
+                
+                // Aguarda 3 segundos e recarrega a página
                 setTimeout(() => {
-                    const modalEl = document.getElementById('avaliacaoModal');
-                    const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-                    modal.hide();
-                    mensagem.innerHTML = '';
-                }, 1500);
+                    window.location.href = 'index.php'; // redireciona para index.php
+                }, 3000);
                 break;
+
             case 'erro_upload':
                 mensagem.innerHTML = '<div class="alert alert-danger">Erro ao enviar a foto. Tente novamente.</div>';
                 break;
+
             case 'erro_extensao':
                 mensagem.innerHTML = '<div class="alert alert-danger">Extensão de arquivo não permitida. Use jpg, png, gif ou webp.</div>';
                 break;
+
             case 'erro_bd':
             default:
                 mensagem.innerHTML = '<div class="alert alert-danger">Erro ao salvar avaliação. Tente novamente.</div>';
@@ -438,6 +575,7 @@ document.getElementById('formAvaliacao').addEventListener('submit', function(e){
         console.error(err);
     });
 });
+
 </script>
 
 <script>
@@ -446,17 +584,113 @@ const carousel = document.getElementById('carouselAvaliacoes');
 let scrollAmount = 0;
 const speed = 0.6; // velocidade do scroll (px por frame)
 const cardWidth = 320; // largura aproximada do card + margin
+let paused = false; // variável de controle
+
+carousel.addEventListener('mouseenter', () => { paused = true; });
+carousel.addEventListener('mouseleave', () => { paused = false; });
 
 function autoScroll() {
-    scrollAmount += speed;
-    if(scrollAmount >= carousel.scrollWidth - carousel.clientWidth) {
-        scrollAmount = 0; // volta ao início para loop infinito
+    if(!paused) { // só roda se não estiver pausado
+        scrollAmount += speed;
+        if(scrollAmount >= carousel.scrollWidth - carousel.clientWidth) {
+            scrollAmount = 0; // volta ao início
+        }
+        carousel.scrollTo({ left: scrollAmount, behavior: 'smooth' });
     }
-    carousel.scrollTo({ left: scrollAmount, behavior: 'smooth' });
     requestAnimationFrame(autoScroll);
 }
 
 autoScroll();
+
+</script>
+
+<script>
+let slides = document.querySelectorAll('.banner-slide');
+let current = 0;
+const delay = 4000; // tempo entre transições (ms)
+
+function nextBanner() {
+    let exiting = slides[current];
+    exiting.classList.remove('active');
+    exiting.classList.add('exiting');
+
+    current = (current + 1) % slides.length;
+    let entering = slides[current];
+    entering.classList.add('entering');
+
+    // Forçar reflow para aplicar transição
+    void entering.offsetWidth;
+
+    entering.classList.add('active');
+
+    setTimeout(() => {
+        exiting.classList.remove('exiting');
+        entering.classList.remove('entering');
+    }, 800); // tempo da animação
+}
+
+setInterval(nextBanner, delay);
+</script>
+
+<script>
+const produtos = <?= json_encode($produtosArray) ?>;
+let index = 0;
+
+const leftTop = document.querySelector('.highlight-left-top');
+const leftBottom = document.querySelector('.highlight-left-bottom');
+const right = document.querySelector('.highlight-right');
+
+function updateProdutos() {
+    const p0 = produtos[index % produtos.length];
+    const p1 = produtos[(index + 1) % produtos.length];
+    const p2 = produtos[(index + 2) % produtos.length];
+
+    // Número do WhatsApp (sem espaços ou caracteres especiais)
+    const whatsapp = "<?= $telefone ?>"; 
+
+    // Mensagem padrão
+    const msg0 = encodeURIComponent(`Olá! Tenho interesse no produto: ${p0.nome} - R$ ${Number(p0.preco).toFixed(2).replace('.',',')}`);
+    const msg1 = encodeURIComponent(`Olá! Tenho interesse no produto: ${p1.nome} - R$ ${Number(p1.preco).toFixed(2).replace('.',',')}`);
+    const msg2 = encodeURIComponent(`Olá! Tenho interesse no produto: ${p2.nome} - R$ ${Number(p2.preco).toFixed(2).replace('.',',')}`);
+
+    // Aplicar conteúdo com link
+    leftTop.innerHTML = `
+      <a href="https://wa.me/${whatsapp}?text=${msg0}" target="_blank">
+        <img src="assets/img/produtos/${p0.imagem}" alt="${p0.nome}">
+        <div class="card-overlay"><h6>${p0.nome}</h6><p>R$ ${Number(p0.preco).toFixed(2).replace('.',',')}</p></div>
+      </a>`;
+    
+    leftBottom.innerHTML = `
+      <a href="https://wa.me/${whatsapp}?text=${msg1}" target="_blank">
+        <img src="assets/img/produtos/${p1.imagem}" alt="${p1.nome}">
+        <div class="card-overlay"><h6>${p1.nome}</h6><p>R$ ${Number(p1.preco).toFixed(2).replace('.',',')}</p></div>
+      </a>`;
+    
+    right.innerHTML = `
+      <a href="https://wa.me/${whatsapp}?text=${msg2}" target="_blank">
+        <img src="assets/img/produtos/${p2.imagem}" alt="${p2.nome}">
+        <div class="card-overlay"><h6>${p2.nome}</h6><p>R$ ${Number(p2.preco).toFixed(2).replace('.',',')}</p></div>
+      </a>`;
+
+    // Reset classes e ativar fade/slide
+    leftTop.className = 'highlight-left-top active';
+    leftBottom.className = 'highlight-left-bottom active';
+    right.className = 'highlight-right active';
+}
+
+// Inicial
+updateProdutos();
+
+// Rotação automática com fade
+setInterval(()=>{
+    index++;
+    // Remover active para animação de fade-out
+    leftTop.classList.remove('active');
+    leftBottom.classList.remove('active');
+    right.classList.remove('active');
+
+    setTimeout(updateProdutos, 400); // delay para aplicar fade-in
+}, 4000);
 </script>
 
 <?php include "includes/footer.php"; ?>

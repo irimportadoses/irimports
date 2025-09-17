@@ -8,7 +8,7 @@
     <style>
         body {
             padding-top: 150px;
-            background-color: #000; /* fundo preto */
+            background-color: #060606ff; /* fundo preto */
             color: #f5f5f5;
             background-image: 
                 linear-gradient(rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.77)), /* camada semi-transparente */
