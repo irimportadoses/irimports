@@ -39,6 +39,9 @@ require_once "admin_auth.php"; // Verifica login
                         <a class="nav-link" href="categorias.php">Categorias</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="subcategorias.php">Sub Categorias</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="produtos.php">Produtos</a>
                     </li>
                     <li class="nav-item">

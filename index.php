@@ -23,457 +23,105 @@ $avaliacoes = $conn->query("SELECT nome, nota, comentario, data, foto FROM avali
 ?>
 
 <style>
-/* =========================
-   ESTILOS GERAIS DO SITE
-   ========================= */
+  /* ===== Estrelas ===== */
+  .categoria-icon { display: flex;flex-direction: column;align-items: center;font-size: 0.9rem;color: #0e72deff;cursor: pointer;transition: transform 0.3s;}
+  .categoria-icon img {transition: transform 0.3s;border-radius: 12px;}
+  .categoria-icon:hover img {transform: scale(1.2);}
+  .categoria-icon p {margin-top: 5px;font-weight: 500;}
+  .star-rating {display: flex;flex-direction: row-reverse;justify-content: center;gap: 5px;font-size: 2rem;}
+  .star-rating input { display: none; }
+  .star-rating label { cursor: pointer; color: #555; transition: color 0.2s; }
+  .star-rating label:hover,
+  .star-rating label:hover ~ label { color: gold; }
+  .star-rating input:checked ~ label { color: gold; }
 
-/* ===== Estrelas ===== */
-.categoria-icon {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 0.9rem;
-  color: #0e72deff;
-  cursor: pointer;
-  transition: transform 0.3s;
-}
-.categoria-icon img {
-  transition: transform 0.3s;
-  border-radius: 12px;
-}
+  /* ===== Quem Somos ===== */
+  .quem-somos-img {max-width: 300px;opacity: 0.3;transition: opacity 0.3s, transform 0.3s;}
+  .quem-somos-img:hover {opacity: 1;transform: scale(1.03);}
 
-.categoria-icon:hover img {
-  transform: scale(1.2);
-}
-.categoria-icon p {
-  margin-top: 5px;
-  font-weight: 500;
-}
+  /* ===== Botão WhatsApp ===== */
+  .btn-whatsapp {transition: all 0.3s;background-color: #25d366;border-color: #25d366;}
+  .btn-whatsapp:hover {background-color: #1ebe57;border-color: #1ebe57;transform: translateY(-2px);}
 
-.star-rating {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: center;
-  gap: 5px;
-  font-size: 2rem;
-}
-.star-rating input { display: none; }
-.star-rating label { cursor: pointer; color: #555; transition: color 0.2s; }
-.star-rating label:hover,
-.star-rating label:hover ~ label { color: gold; }
-.star-rating input:checked ~ label { color: gold; }
+  /* ===== Carrossel de Destaque ===== */
+  .highlight-carousel {display: flex;overflow-x: auto;gap: 15px;padding: 0 20px 10px 20px;scroll-behavior: smooth;justify-content: center;}
+  .highlight-carousel::-webkit-scrollbar { height: 8px; }
+  .highlight-carousel::-webkit-scrollbar-thumb {background-color: rgba(0, 0, 0, 0.98);border-radius: 4px;}
+  .highlight-carousel::-webkit-scrollbar-track { background: transparent; }
+  .highlight-card {position: relative;flex: 0 0 200px;height: 250px;border-radius: 12px;overflow: hidden;cursor: pointer;transition: transform 0.3s, box-shadow 0.3s;background: #000000;display: flex;align-items: center;justify-content: center;}
+  .highlight-card:hover {transform: scale(1.05);box-shadow: 0 10px 20px rgba(0,0,0,0.2);}
+  .highlight-card img {width: 100%;height: 100%;object-fit: contain;padding: 10px;display: block;}
+  .card-overlay {position: absolute;bottom: 0;width: 100%;background: rgba(0,0,0,0.55);color: #fff;padding: 10px;text-align: center;}
+  .card-overlay h6 { margin: 0; font-size: 0.95rem; }
+  .card-overlay p { margin: 2px 0 0 0; font-size: 0.85rem; }
 
-/* ===== Quem Somos ===== */
-.quem-somos-img {
-  max-width: 300px;
-  opacity: 0.3;
-  transition: opacity 0.3s, transform 0.3s;
-}
-.quem-somos-img:hover {
-  opacity: 1;
-  transform: scale(1.03);
-}
+  /* ===== Avaliações (carrossel horizontal) ===== */
+  .avaliacoes-carousel {display: flex;overflow-x: auto;gap: 15px;padding: 0 10px;scroll-behavior: smooth;}
+  .avaliacoes-carousel::-webkit-scrollbar { height: 8px; }
+  .avaliacoes-carousel::-webkit-scrollbar-thumb {background-color: rgba(0,0,0,0.4);border-radius: 4px;}
+  .avaliacoes-carousel::-webkit-scrollbar-track {background: transparent;}
+  .avaliacao-card {flex: 0 0 300px;height: 220px;padding: 15px;background: #fff;border-radius: 12px;box-shadow: 0 4px 15px rgba(0,0,0,0.1);display: flex;flex-direction: column;justify-content: space-between;overflow: hidden;}
+  .avaliacao-card .comentario {overflow-y: auto;font-size: 0.9rem;}
 
-/* ===== Carrossel Flutuante ===== */
-.floating-carousel-container {
-  position: relative;
-  width: 90vw;
-  height: 350px;
-  overflow: hidden;
-  perspective: 800px;
-  background: #f8f9fa01;
-  border-radius: 12px;
-  margin: 0 auto 40px auto;
-}
-.floating-item {
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform-style: preserve-3d;
-  transition: transform 0.2s, opacity 0.2s;
-}
-.floating-item img {
-  max-width: 120px;
-  max-height: 120px;
-  object-fit: contain;
-  border-radius: 12px;
-  cursor: pointer;
-}
-.floating-item .caption {
-  text-align: center;
-  background: rgba(0, 0, 0, 0);
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 5px;
-  margin-top: 4px;
-  font-size: 0.8rem;
-}
-
-/* ===== Cards de Produtos ===== */
-.product-card {
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-.card-img-wrapper {
-  width: 100%;
-  height: 250px; /* altura fixa */
-  overflow: hidden;
-  border-radius: 15px;
-  display: flex;
-  align-items: center; /* centraliza verticalmente imagens menores */
-  justify-content: center; /* centraliza horizontalmente */
-  background-color: #f5f5f5; /* cor de fundo caso imagem não carregue */
-}
-.card-img-wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* preenche totalmente, pode cortar */
-}
-
-.product-card:hover .card-img-wrapper img {
-  transform: scale(1.05); /* ainda mantém o efeito hover */
-}
-/* ===== Botão WhatsApp ===== */
-.btn-whatsapp {
-  transition: all 0.3s;
-  background-color: #25d366;
-  border-color: #25d366;
-}
-.btn-whatsapp:hover {
-  background-color: #1ebe57;
-  border-color: #1ebe57;
-  transform: translateY(-2px);
-}
-
-/* ===== Carrossel de Destaque ===== */
-.highlight-carousel {
-  display: flex;
-  overflow-x: auto;
-  gap: 15px;
-  padding: 0 20px 10px 20px;
-  scroll-behavior: smooth;
-  justify-content: center;
-}
-.highlight-carousel::-webkit-scrollbar { height: 8px; }
-.highlight-carousel::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.98);
-  border-radius: 4px;
-}
-.highlight-carousel::-webkit-scrollbar-track { background: transparent; }
-.highlight-card {
-  position: relative;
-  flex: 0 0 200px;
-  height: 250px;
-  border-radius: 12px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
-  background: #000000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.highlight-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
-.highlight-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 10px;
-  display: block;
-}
-.card-overlay {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: rgba(0,0,0,0.55);
-  color: #fff;
-  padding: 10px;
-  text-align: center;
-}
-.card-overlay h6 { margin: 0; font-size: 0.95rem; }
-.card-overlay p { margin: 2px 0 0 0; font-size: 0.85rem; }
-
-/* ===== Avaliações (carrossel horizontal) ===== */
-.avaliacoes-carousel {
-  display: flex;
-  overflow-x: auto;
-  gap: 15px;
-  padding: 0 10px;
-  scroll-behavior: smooth;
-}
-.avaliacoes-carousel::-webkit-scrollbar { height: 8px; }
-.avaliacoes-carousel::-webkit-scrollbar-thumb {
-  background-color: rgba(0,0,0,0.4);
-  border-radius: 4px;
-}
-.avaliacoes-carousel::-webkit-scrollbar-track { background: transparent; }
-.avaliacao-card {
-  flex: 0 0 300px;
-  height: 220px;
-  padding: 15px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
-}
-.avaliacao-card .comentario {
-  overflow-y: auto;
-  font-size: 0.9rem;
-}
-/* ===== Produtos em Destaque ===== */
-/* Faixa de fundo */
+  /* ===== Produtos em Destaque ===== */
 .highlight-background {
-  width: 100vw; /* ocupa toda a tela */
-  margin-left: calc(-50vw + 50%); /* remove margem do container */
-  padding: 80px 0;
-  background: linear-gradient(135deg, #0e72deff, #00172cff);
-  box-sizing: border-box;
+    width: 100vw;
+    margin-left: calc(-50vw + 55%);
+    padding: 90px 0;
+    box-sizing: border-box;
 }
-
-/* Container do carrossel */
 .destaque-container {
-  width: 100%;
-  overflow: hidden;
-  margin: 0 auto;
-  padding: 0; /* remove padding lateral */
+    width: 100%;
+    overflow: hidden;
+    margin: 0 auto;
+    padding: 0;
 }
-
-/* Track do carrossel */
 .destaque-track {
-  display: flex;
-  gap: 25px;
-  animation: scrollProducts 28s linear infinite;
+    display: flex;
+    gap: 25px;
+    animation: scrollProducts 10s linear infinite;
 }
+  .destaque-item {flex: 0 0 300px;background: #fff;border-radius: 20px;padding: 20px;text-align: center;box-shadow: 0 4px 16px rgba(0,0,0,0.25);transition: transform 0.3s;}
+  .destaque-item:hover { transform: translateY(-10px); }
+  .card-img-wrapper {width: 100%;height: 250px;overflow: hidden;border-radius: 15px;display: flex;align-items: center;justify-content: center;background-color: #f5f5f5;}
+  .card-img-wrapper img {max-width: 100%;max-height: 100%;object-fit: contain;display: block;border-radius: 15px;transition: transform 0.3s;}
+  .destaque-item h5 {font-size: 18px;margin: 10px 0;color: #111;}
+  .destaque-item p {font-size: 14px;color: #444;min-height: 50px;}
+  .destaque-item .preco {font-size: 20px;color: #28a745;font-weight: bold;margin-bottom: 12px;}
+  @keyframes scrollProducts {0% { transform: translateX(0); }100% { transform: translateX(-50%); }}
+  .btn-comprar {font-size: 1.1rem;padding: 10px 20px;border-radius: 12px;transition: all 0.3s;}
+  .btn-comprar:hover {transform: translateY(-2px);background-color: #1fa44d;}
 
-/* Cards */
-.destaque-item {
-  flex: 0 0 300px; /* mais largo */
-  background: #fff;
-  border-radius: 20px;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-  transition: transform 0.3s;
-}
-
-.destaque-item:hover { transform: translateY(-10px); }
-
-.card-img-wrapper {
-  width: 100%;
-  height: 250px; /* altura fixa */
-  overflow: hidden;
-  border-radius: 15px;
-  display: flex;
-  align-items: center; /* centraliza verticalmente imagens menores */
-  justify-content: center; /* centraliza horizontalmente */
-  background-color: #f5f5f5; /* cor de fundo caso imagem não carregue */
-}
-
-.card-img-wrapper img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain; /* muda para contain, não corta mais */
-  display: block;
-  border-radius: 15px;
-  transition: transform 0.3s;
-}
-
-.destaque-item h5 {
-  font-size: 18px;
-  margin: 10px 0;
-  color: #111;
-}
-
-.destaque-item p {
-  font-size: 14px;
-  color: #444;
-  min-height: 50px;
-}
-
-.destaque-item .preco {
-  font-size: 20px;
-  color: #28a745;
-  font-weight: bold;
-  margin-bottom: 12px;
-}
-
-@keyframes scrollProducts {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.btn-comprar {
-    font-size: 1.1rem;      /* aumenta o texto */
-    padding: 10px 20px;     /* aumenta altura e largura */
-    border-radius: 12px;    /* cantos arredondados */
-    transition: all 0.3s;
-}
-
-.btn-comprar:hover {
-    transform: translateY(-2px);
-    background-color: #1fa44d; /* leve escurecimento no hover */
-}
-
-/* ===== Banner Animado ===== */
-#banner-container {
-  position: relative;
-  height: 400px;
-  overflow: hidden;
-  background: #11111170; /* fundo escuro translúcido */
-}
-.banner-slide {
-  position: absolute;
-  width: 100%; 
-  height: 100%;
-  top: 0; left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 500px;
-  padding: 0 30px;
-  box-sizing: border-box;
-  opacity: 0;
-  transform: translateX(100%);
-  transition: all 1s ease-in-out;
-}
-.banner-slide.active {
-  opacity: 1;
-  transform: translateX(0);
-  z-index: 2;
-}
-.banner-slide.exiting {
-  opacity: 1;
-  transform: translateX(-100%) rotateY(45deg) rotateZ(10deg);
-  z-index: 1;
-}
-.banner-text {
-  max-width: 45%;
-  text-align: left;
-  color: #fff;
-}
-.banner-title { font-size: 4rem; margin-bottom: 10px; }
-.banner-desc { font-size: 1rem; line-height: 1.4; }
-.banner-logo {
-  max-width: 30%;
-  perspective: 1000px;
-}
-.banner-logo img {
-  width: 100%;
-  object-fit: contain;
-  transition: transform 1s ease-in-out;
-}
-.banner-slide.exiting .banner-logo img {
-  transform: translateX(200%) rotateY(180deg) rotateZ(20deg);
-}
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.6);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  z-index: 10;
-  transition: background 0.3s;
-}
-.carousel-btn:hover { background: rgba(0, 0, 0, 0.8); }
-.carousel-btn.prev { left: 10px; }
-.carousel-btn.next { right: 10px; }
-
-/* ===== Faixa de Fundo Produtos Em Destaque ===== */
-.highlight-background {
-  width: 100%;
-  background: linear-gradient(45deg, #e3e3e377 -50%, #13131362 85%);
-  padding: 90px 0;
-  margin-left: calc(-50vw + 50%); /* remove margens do container */
-  box-sizing: border-box;
-}
-
-.highlight-rotation-container {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 20px;
-  max-width: 1000px;
-  margin: 0 auto 50px auto;
-}
-.column-left {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  gap: 20px;
-}
-.column-right {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.highlight-left-top, .highlight-left-bottom, .highlight-right {
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.5s, opacity 0.5s;
-  background: #fbf9f90a;
-  color: #c51717ff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-}
-.highlight-right { height: 420px; }
-.highlight-left-top img, .highlight-left-bottom img, .highlight-right img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transition: transform 0.5s;
-}
-.highlight-left-top:hover img, .highlight-left-bottom:hover img, .highlight-right:hover img {
-  transform: scale(1.5);
-}
-.card-overlay {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: rgba(32, 46, 80, 0.45);
-  text-align: center;
-  padding: 8px;
-}
-.card-overlay h6 { margin: 0; font-size: 1rem; }
-.card-overlay p { margin: 2px 0 0 0; font-size: 0.85rem; }
-
-.quem-somos-text h2 { color: #0e72deff;; }
-.o-que-achou { color: #0e72deff;; }
-
-.btn-azul-personalizado {
-    background-color: #0e72de;
-    border-color: #0e72de;
-    color: #fff;
-    transition: all 0.3s;
-}
-
-.btn-azul-personalizado:hover {
-    background-color: #0950b0; /* azul mais escuro no hover */
-    border-color: #0950b0;
-    transform: translateY(-2px);
-}
-.categoria-icon img {
-    filter: invert(38%) sepia(83%) saturate(6471%) hue-rotate(190deg) brightness(95%) contrast(90%);
-}
-
+  /* ===== Banner Animado ===== */
+  #banner-container {position: relative;height: 400px;overflow: hidden;background: #11111170; /* fundo escuro translúcido */}
+  .banner-slide {position: absolute;width: 100%; height: 100%;top: 0; left: 0;display: flex;justify-content: center;align-items: center;gap: 500px;padding: 0 30px;box-sizing: border-box;opacity: 0;transform: translateX(100%);transition: all 1s ease-in-out;}
+  .banner-slide.active {opacity: 1;transform: translateX(0);z-index: 2;}
+  .banner-slide.exiting {opacity: 1;transform: translateX(-100%) rotateY(45deg) rotateZ(10deg);z-index: 1;}
+  .banner-text {max-width: 45%;text-align: left;color: #fff;}
+  .banner-title { font-size: 4rem; margin-bottom: 10px; }
+  .banner-desc { font-size: 1rem; line-height: 1.4; }
+  .banner-logo {max-width: 30%;perspective: 1000px;}
+  .banner-logo img {width: 100%;object-fit: contain;transition: transform 1s ease-in-out;}
+  .banner-slide.exiting .banner-logo img {transform: translateX(200%) rotateY(180deg) rotateZ(20deg);}
+  .carousel-btn {position: absolute;top: 50%;transform: translateY(-50%);background: rgba(0,0,0,0.6);color: #fff;border: none;border-radius: 50%;width: 40px;height: 40px;cursor: pointer;z-index: 10;transition: background 0.3s;}
+  .carousel-btn:hover { background: rgba(0, 0, 0, 0.8); }
+  .carousel-btn.prev { left: 10px; }
+  .carousel-btn.next { right: 10px; }
+  .highlight-background {position: relative;left: 50%;transform: translateX(-50%);width: 100vw;background: linear-gradient(45deg, #e3e3e377 -50%, #13131362 85%);padding: 90px 0;box-sizing: border-box;}
+  .highlight-rotation-container {display: grid;grid-template-columns: 1fr 1.5fr;gap: 20px;max-width: 1000px;margin: 0 auto 50px auto;}
+  .column-left {display: grid;grid-template-rows: 1fr 1fr;gap: 20px;}
+  .column-right {display: flex;align-items: center;justify-content: center;}
+  .highlight-left-top, .highlight-left-bottom, .highlight-right {position: relative;border-radius: 12px;overflow: hidden;cursor: pointer;transition: transform 0.5s, opacity 0.5s;background: #fbf9f90a;color: #c51717ff;display: flex;flex-direction: column;align-items: center;justify-content: center;height: 200px;}
+  .highlight-right { height: 420px; }.highlight-left-top img, .highlight-left-bottom img, .highlight-right img {width: 100%;height: 100%;object-fit: contain;transition: transform 0.5s;}
+  .highlight-left-top:hover img, .highlight-left-bottom:hover img, .highlight-right:hover img {transform: scale(1.5);}
+  .card-overlay {position: absolute;bottom: 0;width: 100%;background: rgba(32, 46, 80, 0.45);text-align: center;padding: 8px;}
+  .card-overlay h6 { margin: 0; font-size: 1rem; }
+  .card-overlay p { margin: 2px 0 0 0; font-size: 0.85rem; }
+  .quem-somos-text h2 { color: #0e72deff;; }
+  .o-que-achou { color: #0e72deff;; }
+  .btn-azul-personalizado {background-color: #0e72de;border-color: #0e72de;color: #fff;transition: all 0.3s;}
+  .btn-azul-personalizado:hover {background-color: #0950b0;border-color: #0950b0;transform: translateY(-2px);}
+  .categoria-icon img {filter: invert(38%) sepia(83%) saturate(6471%) hue-rotate(190deg) brightness(95%) contrast(90%);}
 </style>
 
 <!-- ===== Banner Animado ===== -->
@@ -496,67 +144,32 @@ $avaliacoes = $conn->query("SELECT nome, nota, comentario, data, foto FROM avali
     <?php $i++; endwhile; ?>
 </div>
 
-
-</br>
-
-<div class="container py-5">
-    <h2 class="text-center mb-4">Categorias</h2>
-    <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
-        <?php while($cat = $categorias->fetch_assoc()): ?>
-            <a href="produtos.php?categoria=<?= urlencode($cat['nome']) ?>" class="categoria-icon text-center text-decoration-none">
-                <img src="assets/img/categorias/<?= htmlspecialchars($cat['imagem']) ?>" 
-                     alt="<?= htmlspecialchars($cat['nome']) ?>" 
-                     style="height:70px;">
-                <p><?= htmlspecialchars($cat['nome']) ?></p>
-            </a>
-        <?php endwhile; ?>
-    </div>
-</div>
-
-
-</br>
 <!-- Produtos em Destaque -->
-<div class="highlight-background"> 
-  <h2 class="text-center text-white mb-4">Produtos em Destaque</h2>
-  <div class="destaque-container">
-    <div class="destaque-track">
-      <?php 
-      // Puxar produtos de destaque
-      $produtos = $conn->query("SELECT * FROM produtos WHERE destaque = 1 ORDER BY id DESC");
-      while($prod = $produtos->fetch_assoc()): ?>
-        <div class="destaque-item">
-          <div class="card-img-wrapper">
-            <img src="assets/img/produtos/<?= htmlspecialchars($prod['imagem']) ?>" 
-                 alt="<?= htmlspecialchars($prod['nome']) ?>">
-          </div>
-          <h5><?= htmlspecialchars($prod['nome']) ?></h5>
-          <p><?= htmlspecialchars($prod['descricao']) ?></p>
-          <div class="preco">R$ <?= number_format($prod['preco'],2,",",".") ?></div>
-          <a href="https://wa.me/55<?= $telefone ?>?text=Olá! Tenho interesse no produto: <?= urlencode($prod['nome']) ?>" 
-            target="_blank" class="btn btn-success btn-comprar">Comprar</a>
+<div class="highlight-background">
+    <h2 class="text-center text-white mb-4">Produtos em Destaque</h2>
+    <div class="destaque-container">
+        <div class="destaque-track">
+            <?php 
+            $produtos = $conn->query("SELECT * FROM produtos WHERE destaque = 1 ORDER BY id DESC");
+            $produtosArray = [];
+            while($prod = $produtos->fetch_assoc()): 
+                $produtosArray[] = $prod; // criar array JS caso precise
+            ?>
+            <div class="destaque-item">
+                <div class="card-img-wrapper">
+                    <img src="assets/img/produtos/<?= htmlspecialchars($prod['imagem']) ?>" 
+                         alt="<?= htmlspecialchars($prod['nome']) ?>">
+                </div>
+                <h5><?= htmlspecialchars($prod['nome']) ?></h5>
+                <p><?= htmlspecialchars($prod['descricao']) ?></p>
+                <div class="preco">R$ <?= number_format($prod['preco'],2,",",".") ?></div>
+                <a href="https://wa.me/55<?= $telefone ?>?text=Olá! Tenho interesse no produto: <?= urlencode($prod['nome']) ?>" 
+                   target="_blank" class="btn btn-success btn-comprar">Comprar</a>
+            </div>
+            <?php endwhile; ?>
         </div>
-      <?php endwhile; ?>
-
-      <!-- duplicação para efeito infinito -->
-      <?php 
-      $produtos2 = $conn->query("SELECT * FROM produtos WHERE destaque = 1 ORDER BY id DESC");
-      while($prod = $produtos2->fetch_assoc()): ?>
-        <div class="destaque-item">
-          <div class="card-img-wrapper">
-            <img src="assets/img/produtos/<?= htmlspecialchars($prod['imagem']) ?>" 
-                 alt="<?= htmlspecialchars($prod['nome']) ?>">
-          </div>
-          <h5><?= htmlspecialchars($prod['nome']) ?></h5>
-          <p><?= htmlspecialchars($prod['descricao']) ?></p>
-          <div class="preco">R$ <?= number_format($prod['preco'],2,",",".") ?></div>
-          <a href="https://wa.me/55<?= $telefone ?>?text=Olá! Tenho interesse no produto: <?= urlencode($prod['nome']) ?>" 
-             target="_blank" class="btn btn-success btn-sm">Comprar</a>
-        </div>
-      <?php endwhile; ?>
     </div>
-  </div>
 </div>
-
 
 
 
@@ -570,7 +183,7 @@ $avaliacoes = $conn->query("SELECT nome, nota, comentario, data, foto FROM avali
             <p>Somos uma empresa especializada em acessórios de alta qualidade. Nosso compromisso é oferecer produtos que unem design, conforto e durabilidade, sempre pensando na satisfação dos nossos clientes.</p>
         </div>
         <div class="col-md-6 text-center">
-            <img src="assets/img/logo/ir.jpg" class="quem-somos-img img-fluid rounded shadow-sm" alt="Sobre Nós">
+            <img src="assets/img/logo/logo.png" class="quem-somos-img img-fluid rounded shadow-sm" alt="Sobre Nós">
         </div>
     </div>
 </section>

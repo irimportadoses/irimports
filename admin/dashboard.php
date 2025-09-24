@@ -24,6 +24,7 @@ function getTotal($conn, $tabela) {
 $totalCategorias = getTotal($conn, "categorias");
 $totalProdutos   = getTotal($conn, "produtos");
 $totalBanners    = getTotal($conn, "banners");
+$totalSubcategorias = getTotal($conn, "subcategorias");
 
 // Variável de feedback
 $mensagem = "";
@@ -94,7 +95,13 @@ $totalPendentes  = ($resPendentes && $row = $resPendentes->fetch_assoc()) ? $row
                 <a href="categorias.php" class="btn btn-primary">Gerenciar</a>
             </div>
         </div>
-
+        <div class="col-md-4">
+            <div class="card text-center card-dashboard p-3">
+                <h5>Subcategorias</h5>
+                <p class="fs-3"><?= $totalSubcategorias ?></p>
+                <a href="subcategorias.php" class="btn btn-primary">Gerenciar</a>
+            </div>
+        </div>
         <div class="col-md-4">
             <div class="card text-center card-dashboard p-3">
                 <h5>Produtos</h5>
@@ -103,6 +110,9 @@ $totalPendentes  = ($resPendentes && $row = $resPendentes->fetch_assoc()) ? $row
             </div>
         </div>
 
+    </div>
+
+    <div class="row g-4 mt-4">
         <div class="col-md-4">
             <div class="card text-center card-dashboard p-3">
                 <h5>Banners</h5>
@@ -110,9 +120,6 @@ $totalPendentes  = ($resPendentes && $row = $resPendentes->fetch_assoc()) ? $row
                 <a href="banners.php" class="btn btn-primary">Gerenciar</a>
             </div>
         </div>
-    </div>
-
-    <div class="row g-4 mt-4">
     <!-- Card Avaliações -->
         <div class="col-md-4">
             <div class="card text-center card-dashboard p-3">
